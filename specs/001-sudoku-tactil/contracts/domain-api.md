@@ -40,7 +40,8 @@ function generateSudoku(difficulty: Difficulty, seed: number): Sudoku;
 
 - `countSolutions(result.givens, 2) === 1`.
 - `solve(result.givens)` es igual a `result.solution`.
-- Nº de pistas dentro de `CLUE_RANGES[difficulty]` (ver research R3 para el caso límite).
+- Nº de pistas siempre dentro de `CLUE_RANGES[difficulty]`; si no lo consigue en 200 intentos lanza
+  `Error('generation-exhausted')` en vez de devolver un puzle fuera de rango (research R3).
 - Misma `(difficulty, seed)` → mismo resultado.
 
 ## Partida (reducer)
@@ -85,5 +86,8 @@ type GenerateResponse =
 
 - Las respuestas llevan el `id` de la petición; el hilo principal ignora respuestas de
   peticiones obsoletas (por ejemplo, si se cambió de nivel mientras se generaba).
-- Si el worker no está disponible o falla, el hilo principal genera de forma síncrona como
-  respaldo.
+- Si el worker responde `ok: false`, el hilo principal reintenta una vez con una semilla nueva;
+  si el worker no está disponible o vuelve a fallar, genera de forma síncrona (semilla nueva)
+  como respaldo.
+- **Semilla de prueba**: `?seed=N` en la URL fija la semilla del **primer** puzle de la carga
+  (para pruebas e2e deterministas). No afecta a las partidas siguientes.

@@ -38,9 +38,11 @@ impacto en la constitución.
      ser única, se restaura.
   3. Parar al alcanzar el número de pistas objetivo, elegido al azar dentro del rango del
      nivel (Fácil 36-45, Medio 30-35, Difícil 24-29).
-  4. Si tras recorrer todas las celdas no se llega al rango (posible en Difícil), reintentar
-     con una nueva solución hasta 20 intentos; si se agotan, aceptar el mejor resultado con
-     el mínimo de pistas obtenido y registrarlo en las pruebas de muestra (SC-002).
+  4. Si tras recorrer todas las celdas quedan más pistas que el máximo del rango (posible en
+     Difícil), reintentar con una nueva solución hasta quedar dentro. Nunca se devuelve un
+     puzle fuera de rango (US3, escenario 2). Tope de seguridad de 200 intentos: si se agota,
+     el generador lanza un error y el hilo principal reintenta con otra semilla. La prueba de
+     muestra mide el número medio de intentos por nivel.
 - **Resolvedor**: backtracking con máscaras de bits por fila/columna/caja y heurística de
   "celda con menos candidatos primero" (MRV). Resuelve un 9×9 típico en microsegundos-
   milisegundos, suficiente para las ~81 comprobaciones de unicidad.

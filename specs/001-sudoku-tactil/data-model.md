@@ -23,7 +23,7 @@ Puzle generado; inmutable una vez creado.
 |-------|------|--------|
 | `givens` | `Grid` | Pistas iniciales. Sin repeticiones en fila/columna/caja. |
 | `solution` | `Grid` | Completa (sin `0`), válida, y coincide con `givens` en cada pista. |
-| `difficulty` | `Difficulty` | Nº de pistas: easy 36-45, medium 30-35, hard 24-29 (ver research R3 para el caso de no alcanzarlo). |
+| `difficulty` | `Difficulty` | Nº de pistas: easy 36-45, medium 30-35, hard 24-29 (siempre dentro del rango; ver research R3). |
 | `seed` | entero 32 bits | Semilla usada; permite reproducir el puzle en pruebas. |
 
 **Invariante**: `givens` tiene exactamente una solución y es `solution` (FR-001).
