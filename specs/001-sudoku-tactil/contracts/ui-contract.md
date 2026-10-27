@@ -56,7 +56,7 @@ Todos usan `role="dialog"` con `aria-modal="true"`, y el foco pasa al diálogo a
 ## Restricciones de layout
 
 - Sin scroll desde 360×640 CSS en vertical; en horizontal, teclado a la derecha del tablero.
-- Teclas y botones ≥ 44×44 px. Celdas ≥ 36×36 px (ver *Complexity Tracking* en el plan).
+- Teclas y botones ≥ 44×44 px. Celdas ≥ 36×36 px (constitución I, v1.0.1).
 - Sin hover, doble toque ni pulsación larga como única vía de acción; nunca se abre el teclado
   del sistema.
 - Respeta `prefers-color-scheme: dark` y `prefers-reduced-motion`.

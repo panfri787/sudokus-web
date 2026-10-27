@@ -88,14 +88,11 @@ impacto en la constitución.
     márgenes laterales de 8 px en pantallas estrechas: en 360 px cada celda mide ~38 px
     (mínimo garantizado 36 px). La celda seleccionada se resalta con fuerza para que un toque
     errado se detecte al momento (SC-006 lo valida con usuarios).
-- **Rationale**: cumple FR-017 y la constitución I con la plataforma estándar, salvo el mínimo
-  de 44 px en celdas, que es geométricamente imposible (ver nota).
+- **Rationale**: cumple FR-017 y la constitución I (v1.0.1: teclas y botones ≥ 44 px, celdas
+  ≥ 36 px con selección inequívoca) con la plataforma estándar. 9 celdas de 44 px (396 px) no
+  cabrían en la pantalla mínima de 360 px.
 - **Alternatives considered**: librerías de gestos (innecesarias: no hay gestos, solo toques);
   zoom o lupa sobre el tablero (añade un paso y rompe "dos toques por número").
-
-> **Nota sobre 44 px en celdas**: 9 celdas × 44 px = 396 px, más que los 360 px que la propia
-> constitución I fija como pantalla mínima. Ambas reglas no pueden cumplirse a la vez. Ver
-> *Complexity Tracking* en el plan y la enmienda propuesta.
 
 ## R7. Persistencia local
 

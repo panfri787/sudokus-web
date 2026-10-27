@@ -49,7 +49,7 @@ bundle objetivo < 150 KB gzip
 
 | Principio | Cumplimiento en el diseño | Estado |
 |-----------|---------------------------|--------|
-| **I. Táctil primero** | Dos toques por número; `<button>` sin hover; sin `<input>`; `touch-action: manipulation`; layout sin scroll a 360×640; teclas y botones ≥ 44 px. **Celdas ~38 px (mín. 36 px)**, por debajo de 44 px | ⚠️ Desviación justificada (Complexity Tracking) |
+| **I. Táctil primero** | Dos toques por número; `<button>` sin hover; sin `<input>`; `touch-action: manipulation`; layout sin scroll a 360×640; teclas y botones ≥ 44 px; celdas ~38 px (mín. 36 px) con resaltado fuerte de la selección | ✅ |
 | **II. Solución única** | `generateSudoku` verifica unicidad con `countSolutions(…, 2)`; semilla aleatoria por partida; dificultad por número de pistas documentado; victoria por reglas + tablero completo | ✅ |
 | **III. Test-First** | Dominio aislado en `src/domain/` y probado en Node antes de implementar; pruebas por regla; prueba de muestra de 1.000 puzles; flujos táctiles en Playwright | ✅ |
 | **IV. Cliente, sin backend** | Generación y resolución en el navegador; dependencias mínimas (React, Vite) justificadas en research R1/R2; persistencia local; sin cuentas ni funciones en línea | ✅ |
@@ -57,12 +57,10 @@ bundle objetivo < 150 KB gzip
 | **Restricciones técnicas** | Sitio estático (`vite build`); mobile-first; textos en `src/i18n/es.ts` | ✅ |
 | **Flujo de desarrollo** | Este Constitution Check; verificación táctil en emulación y móvil real ([quickstart.md](./quickstart.md)); pruebas en verde antes de integrar | ✅ |
 
-**Resultado pre-research**: PASS con una desviación justificada (principio I, celdas).
+**Resultado pre-research**: PASS (evaluado contra la constitución v1.0.1).
 
 **Re-evaluación post-diseño** (tras data-model y contratos): PASS. El diseño no introduce
-dependencias nuevas, backend ni datos que salgan del dispositivo. La desviación del principio I
-sigue siendo la única, y se recomienda resolverla con una enmienda de la constitución (ver
-abajo).
+dependencias nuevas, backend ni datos que salgan del dispositivo, y no hay desviaciones.
 
 ## Project Structure
 
@@ -135,10 +133,5 @@ la constitución III.
 
 ## Complexity Tracking
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| Principio I: celdas del tablero de ~38 px (mín. 36 px) en vez de 44×44 px | 9 × 44 px = 396 px, más ancho que la pantalla mínima de 360 px que fija el mismo principio I; ambas reglas no pueden cumplirse a la vez | Scroll horizontal o zoom del tablero (viola "sin scroll" y "dos toques por número"); tablero que no cabe a 360 px (viola el mismo principio I) |
-
-**Enmienda recomendada** (fuera del alcance de este comando): ajustar en la constitución I la
-regla a "teclas y botones ≥ 44×44 px; celdas del tablero ≥ 36×36 px" (cambio PATCH/MINOR) con
-`/speckit-constitution`, para que el plan deje de necesitar esta justificación.
+Sin violaciones de la constitución (v1.0.1). La v1.0.0 exigía 44×44 px también en las celdas,
+lo que era incompatible con la pantalla mínima de 360 px; se resolvió con la enmienda 1.0.1.
