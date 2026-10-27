@@ -39,6 +39,13 @@ npx playwright install --with-deps chromium webkit
 Con Node instalado mediante nvm, `sudo` no ve `npx`; usa
 `sudo env "PATH=$PATH" npx playwright install-deps chromium webkit`.
 
+## Despliegue
+
+La web se publica en **https://panfri787.github.io/sudokus-web/**.
+`.github/workflows/deploy.yml` construye el sitio con `BASE_PATH=/sudokus-web/` y lo despliega en
+GitHub Pages en cada push a `main` (también se puede lanzar a mano desde *Actions*). En local y en
+las pruebas la web se sirve en la raíz (`/`).
+
 ## Integración continua
 
 `.github/workflows/ci.yml` ejecuta tipos, lint, pruebas, tamaño y e2e en cada PR y push a

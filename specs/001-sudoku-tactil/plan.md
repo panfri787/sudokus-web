@@ -29,8 +29,8 @@ estado, estilos ni gestos.
 Playwright con emulación táctil y @axe-core/playwright (extremo a extremo y contraste)
 
 **Target Platform**: navegadores móviles modernos (Safari iOS y Chrome Android, dos últimas
-versiones mayores) y navegadores de escritorio equivalentes; ejecución solo en local en esta
-versión
+versiones mayores) y navegadores de escritorio equivalentes; publicado en GitHub Pages bajo
+`/sudokus-web/` (ruta base configurable con `BASE_PATH`)
 
 **Project Type**: aplicación web de frontal estático (SPA), sin backend
 

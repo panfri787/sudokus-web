@@ -21,7 +21,8 @@
   solo funciona sin conexión una vez cargada la página; no es instalable y sin red no abre
   tras una recarga.
 - Q: ¿Dónde se va a publicar la web para que la gente pueda jugar? → A: Solo en local por
-  ahora; la publicación se decidirá más adelante.
+  ahora; la publicación se decidirá más adelante. *(Revisado 2026-10-27: se publica en GitHub
+  Pages, ver Supuestos › Publicación.)*
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -235,9 +236,9 @@ las notas, el nivel y el tiempo se conservan.
 - **Restricciones técnicas**: el frontal se desarrolla en TypeScript, idealmente con React.
   Esta versión no tiene backend: la generación, la validación y la persistencia ocurren en el
   dispositivo. Si en el futuro se necesita un backend, MUST desarrollarse en Python.
-- **Publicación**: en esta versión la web solo se ejecuta en local; la publicación queda fuera
-  de alcance, aunque el resultado MUST poder servirse como sitio estático (constitución).
-  La verificación táctil se hace en local con emulación táctil del navegador o abriendo la web
-  desde un móvil en la misma red.
+- **Publicación**: la web se publica como sitio estático en GitHub Pages
+  (`https://panfri787.github.io/sudokus-web/`), desplegada automáticamente en cada cambio de
+  `main`, que solo admite cambios que pasan la CI. La verificación táctil puede hacerse en local
+  (emulación o móvil en la misma red) o directamente en esa dirección.
 - **Persistencia**: solo se guarda una partida en curso por dispositivo y navegador; borrar
   los datos del navegador la elimina.
