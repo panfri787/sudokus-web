@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { fromStored, gameReducer, newGame, toStored, type Game, type GameAction } from '../../src/domain'
+import {
+  fromStored,
+  gameReducer,
+  newGame,
+  toStored,
+  type Game,
+  type GameAction,
+} from '../../src/domain'
 import { FIRST_EMPTY, SUDOKU } from './fixtures'
 
 const T0 = 5_000_000

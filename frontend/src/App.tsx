@@ -9,12 +9,14 @@ import { Toolbar } from './components/Toolbar'
 import { es } from './i18n/es'
 import { GameProvider } from './state/GameProvider'
 import { useGame } from './state/gameContext'
+import { useKeyboard } from './state/useKeyboard'
 
 type DialogState = 'none' | 'confirm' | 'level'
 
 export function GameView() {
-  const { game, derived, generating, startNewGame } = useGame()
+  const { game, derived, generating, dispatch, startNewGame } = useGame()
   const [dialog, setDialog] = useState<DialogState>('none')
+  useKeyboard(game, dispatch, dialog === 'none' && game?.status === 'playing' && !generating)
 
   const requestNewGame = () => {
     setDialog(derived?.hasProgress && game?.status === 'playing' ? 'confirm' : 'level')
@@ -38,10 +40,7 @@ export function GameView() {
       </div>
 
       {dialog === 'confirm' && (
-        <ConfirmDialog
-          onConfirm={() => setDialog('level')}
-          onCancel={() => setDialog('none')}
-        />
+        <ConfirmDialog onConfirm={() => setDialog('level')} onCancel={() => setDialog('none')} />
       )}
       {dialog === 'level' && (
         <NewGameDialog

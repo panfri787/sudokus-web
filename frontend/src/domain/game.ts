@@ -136,7 +136,9 @@ export function gameReducer(g: Game, action: GameAction): Game {
     }
 
     case 'resume':
-      return g.status === 'playing' && g.runningSince == null ? { ...g, runningSince: action.now } : g
+      return g.status === 'playing' && g.runningSince == null
+        ? { ...g, runningSince: action.now }
+        : g
   }
 }
 

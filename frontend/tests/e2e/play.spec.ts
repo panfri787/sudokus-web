@@ -38,15 +38,17 @@ test('nueva partida con progreso pide confirmación y carga otro tablero', async
   const board = await openGame(page)
   const i = empties[0]!
   await play(page, board, i, sudoku.solution[i]!)
-  const before = await board.getByRole('button').evaluateAll((els) =>
-    els.map((e) => e.getAttribute('aria-label')).join('|'),
-  )
+  const before = await board
+    .getByRole('button')
+    .evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')).join('|'))
   await page.getByRole('button', { name: 'Nueva partida' }).tap()
   await page.getByRole('button', { name: 'Empezar nueva' }).tap()
   await page.getByRole('button', { name: 'Medio' }).tap()
   await expect
     .poll(() =>
-      board.getByRole('button').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')).join('|')),
+      board
+        .getByRole('button')
+        .evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')).join('|')),
     )
     .not.toBe(before)
 })

@@ -1,6 +1,15 @@
 import { createRng, shuffle, type Rng } from './rng'
 import { countSolutions } from './solver'
-import { boxOf, CELLS, colOf, DIGITS, rowOf, type CellValue, type Difficulty, type Sudoku } from './types'
+import {
+  boxOf,
+  CELLS,
+  colOf,
+  DIGITS,
+  rowOf,
+  type CellValue,
+  type Difficulty,
+  type Sudoku,
+} from './types'
 
 export const CLUE_RANGES: Readonly<Record<Difficulty, { min: number; max: number }>> = {
   easy: { min: 36, max: 45 },

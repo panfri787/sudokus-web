@@ -48,8 +48,18 @@ describe('modo notas', () => {
   it('poner un número limpia sus notas y quita ese dígito de los pares', () => {
     let g = run(start(), { type: 'toggleNotesMode' })
     for (const i of [FIRST_EMPTY, SAME_ROW])
-      g = run(g, { type: 'select', cell: i }, { type: 'input', digit: 1 }, { type: 'input', digit: 3 })
-    g = run(g, { type: 'toggleNotesMode' }, { type: 'select', cell: SAME_ROW }, { type: 'input', digit: 3 })
+      g = run(
+        g,
+        { type: 'select', cell: i },
+        { type: 'input', digit: 1 },
+        { type: 'input', digit: 3 },
+      )
+    g = run(
+      g,
+      { type: 'toggleNotesMode' },
+      { type: 'select', cell: SAME_ROW },
+      { type: 'input', digit: 3 },
+    )
     expect(g.notes[SAME_ROW]).toBe(0)
     expect(g.notes[FIRST_EMPTY]).toBe(bit(1))
     const move = g.history.at(-1)!
@@ -73,7 +83,12 @@ describe('deshacer', () => {
   it('restaura exactamente el estado previo de cada jugada', () => {
     const s0 = run(start(), { type: 'toggleNotesMode' }, { type: 'select', cell: FIRST_EMPTY })
     const s1 = run(s0, { type: 'input', digit: 1 }, { type: 'input', digit: 3 })
-    const s2 = run(s1, { type: 'toggleNotesMode' }, { type: 'select', cell: SAME_ROW }, { type: 'input', digit: 3 })
+    const s2 = run(
+      s1,
+      { type: 'toggleNotesMode' },
+      { type: 'select', cell: SAME_ROW },
+      { type: 'input', digit: 3 },
+    )
     const u1 = run(s2, { type: 'undo' })
     expect(u1.values).toEqual(s1.values)
     expect(u1.notes).toEqual(s1.notes)

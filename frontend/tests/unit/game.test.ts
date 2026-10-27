@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { derive, gameReducer, newGame, type Digit, type Game, type GameAction } from '../../src/domain'
+import {
+  derive,
+  gameReducer,
+  newGame,
+  type Digit,
+  type Game,
+  type GameAction,
+} from '../../src/domain'
 import { FIRST_EMPTY, SUDOKU } from './fixtures'
 
 const T0 = 1_000_000
@@ -104,7 +111,13 @@ describe('victoria', () => {
 
   const fill = (g: Game, cells: number[], value: (i: number) => Digit, now = T0 + 5000) =>
     cells.reduce<Game>(
-      (acc, i) => run(acc, { type: 'select', cell: i }, { type: 'input', digit: value(i) }, { type: 'tick', now }),
+      (acc, i) =>
+        run(
+          acc,
+          { type: 'select', cell: i },
+          { type: 'input', digit: value(i) },
+          { type: 'tick', now },
+        ),
       g,
     )
 

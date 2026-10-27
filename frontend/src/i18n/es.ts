@@ -2,7 +2,10 @@ import type { Difficulty, Digit } from '../domain'
 
 export const es = {
   appTitle: 'Sudoku',
-  difficulty: { easy: 'Fácil', medium: 'Medio', hard: 'Difícil' } satisfies Record<Difficulty, string>,
+  difficulty: { easy: 'Fácil', medium: 'Medio', hard: 'Difícil' } satisfies Record<
+    Difficulty,
+    string
+  >,
   board: 'Tablero de sudoku',
   numbers: 'Números',
   timer: 'Tiempo',

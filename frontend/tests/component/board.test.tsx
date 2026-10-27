@@ -57,7 +57,10 @@ describe('Tablero', () => {
     renderGame({ ...SUDOKU, givens })
     const pad = screen.getByRole('group', { name: 'Números' })
     expect(within(pad).getByRole('button', { name: /^1/ })).toHaveAttribute('aria-disabled', 'true')
-    expect(within(pad).getByRole('button', { name: '2' })).not.toHaveAttribute('aria-disabled', 'true')
+    expect(within(pad).getByRole('button', { name: '2' })).not.toHaveAttribute(
+      'aria-disabled',
+      'true',
+    )
   })
 
   it('no hay campos de texto (nunca se abre el teclado del sistema)', () => {

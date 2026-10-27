@@ -21,7 +21,9 @@ test('recargar conserva tablero, notas, nivel y tiempo', async ({ page }) => {
   const timeBefore = await page.locator('.status:visible [role=timer]').textContent()
 
   await page.reload()
-  await expect(page.getByRole('grid', { name: 'Tablero de sudoku' }).getByRole('button')).toHaveCount(81)
+  await expect(
+    page.getByRole('grid', { name: 'Tablero de sudoku' }).getByRole('button'),
+  ).toHaveCount(81)
   expect(await labels(page)).toEqual(before)
   await expect(page.locator('.status:visible .status-level')).toHaveText('Medio')
   const timeAfter = await page.locator('.status:visible [role=timer]').textContent()
@@ -43,6 +45,8 @@ test('datos guardados ilegibles: partida nueva sin error', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', (e) => errors.push(e.message))
   await page.reload()
-  await expect(page.getByRole('grid', { name: 'Tablero de sudoku' }).getByRole('button')).toHaveCount(81)
+  await expect(
+    page.getByRole('grid', { name: 'Tablero de sudoku' }).getByRole('button'),
+  ).toHaveCount(81)
   expect(errors).toEqual([])
 })

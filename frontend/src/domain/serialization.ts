@@ -36,8 +36,10 @@ function parseGrid(s: unknown, allowEmpty: boolean): CellValue[] | null {
 }
 
 const isObject = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null
-const isCell = (x: unknown): x is number => Number.isInteger(x) && (x as number) >= 0 && (x as number) < CELLS
-const isMask = (x: unknown): x is number => Number.isInteger(x) && (x as number) >= 0 && (x as number) <= 511
+const isCell = (x: unknown): x is number =>
+  Number.isInteger(x) && (x as number) >= 0 && (x as number) < CELLS
+const isMask = (x: unknown): x is number =>
+  Number.isInteger(x) && (x as number) >= 0 && (x as number) <= 511
 const isTime = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x) && x >= 0
 
 function parseSnapshot(x: unknown): CellSnapshot | null {
@@ -52,7 +54,12 @@ function parseMove(x: unknown): Move | null {
   if (!Array.isArray(x.before) || x.before.length === 0) return null
   const before = x.before.map(parseSnapshot)
   if (before.some((s) => s === null)) return null
-  return { kind: x.kind as Move['kind'], cell: x.cell, digit: x.digit, before: before as CellSnapshot[] }
+  return {
+    kind: x.kind as Move['kind'],
+    cell: x.cell,
+    digit: x.digit,
+    before: before as CellSnapshot[],
+  }
 }
 
 /** Serializa la partida; el tramo en marcha del cronómetro se suma a `elapsedMs`. */
