@@ -8,6 +8,21 @@
 
 **Input**: User description: "construir una web en la que se generen de forma aleatoria sudokus y que se puedan resolver de forma sencilla utilizando una interfaz adaptada a pantallas táctiles"
 
+## Clarifications
+
+### Session 2026-10-27
+
+- Q: ¿Qué debe hacer el backend en Python en esta primera versión? → A: Ninguno; sin backend
+  en esta versión. Todo (incluida la generación) se ejecuta en el navegador con
+  TypeScript/React; Python es el lenguaje fijado para cualquier backend futuro.
+- Q: ¿La web debe recoger algún dato de uso o analítica de los jugadores? → A: No; ninguna
+  analítica ni cookies; solo se guarda la partida en el dispositivo y nada sale de él.
+- Q: ¿La web debe poder instalarse como aplicación y abrirse sin conexión en frío? → A: No;
+  solo funciona sin conexión una vez cargada la página; no es instalable y sin red no abre
+  tras una recarga.
+- Q: ¿Dónde se va a publicar la web para que la gente pueda jugar? → A: Solo en local por
+  ahora; la publicación se decidirá más adelante.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Jugar un sudoku nuevo hasta resolverlo (Priority: P1)
@@ -167,8 +182,12 @@ las notas, el nivel y el tiempo se conservan.
 - **FR-016**: El teclado numérico MUST indicar qué números ya están colocados nueve veces.
 - **FR-017**: Toda la interacción MUST funcionar solo con toques, sin hover, doble toque ni
   pulsación larga, y sin abrir el teclado del sistema.
-- **FR-018**: El juego MUST funcionar sin conexión una vez cargada la página y sin necesidad
-  de registrarse.
+- **FR-018**: Una vez cargada la página, el juego MUST seguir funcionando aunque se pierda la
+  conexión (nuevas partidas incluidas), y MUST NOT requerir registro. Abrir o recargar la web
+  sin conexión no está soportado.
+- **FR-019**: El sistema MUST NOT recoger analítica, usar cookies ni enviar datos del jugador
+  fuera del dispositivo; la única información almacenada es la partida en curso y el último
+  nivel elegido, guardados localmente.
 
 ### Key Entities
 
@@ -211,7 +230,14 @@ las notas, el nivel y el tiempo se conservan.
 - **Errores**: se señalan solo los conflictos con las reglas (repeticiones), no los números
   que no coinciden con la solución, para no revelar la respuesta.
 - **Fuera de alcance en esta versión**: cuentas de usuario, rankings, compartir partidas,
-  pistas automáticas o "resolver por mí", variantes distintas del 9×9 clásico, e
-  historial y estadísticas de partidas.
+  pistas automáticas o "resolver por mí", variantes distintas del 9×9 clásico,
+  historial y estadísticas de partidas, e instalación como aplicación o apertura sin conexión.
+- **Restricciones técnicas**: el frontal se desarrolla en TypeScript, idealmente con React.
+  Esta versión no tiene backend: la generación, la validación y la persistencia ocurren en el
+  dispositivo. Si en el futuro se necesita un backend, MUST desarrollarse en Python.
+- **Publicación**: en esta versión la web solo se ejecuta en local; la publicación queda fuera
+  de alcance, aunque el resultado MUST poder servirse como sitio estático (constitución).
+  La verificación táctil se hace en local con emulación táctil del navegador o abriendo la web
+  desde un móvil en la misma red.
 - **Persistencia**: solo se guarda una partida en curso por dispositivo y navegador; borrar
   los datos del navegador la elimina.
