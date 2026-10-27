@@ -1,20 +1,17 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-  type ReactNode,
-} from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react'
 import {
   derive,
+  fromStored,
   gameReducer,
   newGame,
+  toStored,
   type Difficulty,
   type Game,
   type GameAction,
 } from '../domain'
 import { GameContext } from './gameContext'
+import { loadPrefs, savePrefs } from './prefs'
+import { GAME_KEY, readJson, writeJson } from './storage'
 import { usePuzzleSource } from './usePuzzleSource'
 
 type ProviderAction = GameAction | { type: 'load'; game: Game }
@@ -27,15 +24,28 @@ function providerReducer(state: Game | null, action: ProviderAction): Game | nul
 /** Acciones del jugador que cierran un tramo del cronómetro antes de aplicarse. */
 const TIMED: ReadonlySet<GameAction['type']> = new Set(['input', 'erase', 'undo'])
 
+const SAVE_INTERVAL_MS = 300
+
+/** Partida guardada, con el cronómetro reanudado si la página está visible (US4). */
+function restoreGame(): Game | null {
+  const game = fromStored(readJson(GAME_KEY))
+  if (!game) return null
+  const visible = typeof document === 'undefined' || document.visibilityState === 'visible'
+  return game.status === 'playing' && visible ? { ...game, runningSince: Date.now() } : game
+}
+
 interface Props {
   children: ReactNode
-  /** Partida inicial (pruebas); si falta, se genera una. */
+  /** Partida inicial (pruebas); si falta, se restaura la guardada o se genera una. */
   initialGame?: Game
 }
 
 export function GameProvider({ children, initialGame }: Props) {
-  const [game, rawDispatch] = useReducer(providerReducer, initialGame ?? null)
-  const [pending, setPending] = useState<Difficulty | null>(initialGame ? null : 'medium')
+  const [initial] = useState(() => initialGame ?? restoreGame())
+  const [game, rawDispatch] = useReducer(providerReducer, initial)
+  const [pending, setPending] = useState<Difficulty | null>(() =>
+    initial ? null : loadPrefs().lastDifficulty,
+  )
   const source = usePuzzleSource()
 
   const dispatch = useCallback((action: GameAction) => {
@@ -43,9 +53,12 @@ export function GameProvider({ children, initialGame }: Props) {
     rawDispatch(action)
   }, [])
 
-  const startNewGame = useCallback((difficulty: Difficulty) => setPending(difficulty), [])
+  const startNewGame = useCallback((difficulty: Difficulty) => {
+    savePrefs({ lastDifficulty: difficulty })
+    setPending(difficulty)
+  }, [])
 
-  // Generación: cuando hay un nivel pendiente y la fuente está lista.
+  // Generación: cuando hay un nivel pendiente.
   useEffect(() => {
     if (!pending) return
     let cancelled = false
@@ -67,16 +80,35 @@ export function GameProvider({ children, initialGame }: Props) {
     return () => clearInterval(id)
   }, [running])
 
-  // Pausa con la página oculta (FR-008).
-  useEffect(() => {
-    const onVisibility = () =>
-      rawDispatch({
-        type: document.visibilityState === 'hidden' ? 'pause' : 'resume',
-        now: Date.now(),
-      })
-    document.addEventListener('visibilitychange', onVisibility)
-    return () => document.removeEventListener('visibilitychange', onVisibility)
+  // Guardado agrupado (como mucho una escritura cada 300 ms) y forzado al ocultar la página.
+  const latest = useRef(game)
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const flush = useCallback(() => {
+    if (saveTimer.current) clearTimeout(saveTimer.current)
+    saveTimer.current = null
+    if (latest.current) writeJson(GAME_KEY, toStored(latest.current, Date.now()))
   }, [])
+
+  useEffect(() => {
+    latest.current = game
+    if (game && !saveTimer.current) saveTimer.current = setTimeout(flush, SAVE_INTERVAL_MS)
+  }, [game, flush])
+
+  // Pausa con la página oculta (FR-008) y guardado inmediato.
+  useEffect(() => {
+    const onVisibility = () => {
+      const hidden = document.visibilityState === 'hidden'
+      rawDispatch({ type: hidden ? 'pause' : 'resume', now: Date.now() })
+      if (hidden) flush()
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    window.addEventListener('pagehide', flush)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility)
+      window.removeEventListener('pagehide', flush)
+      flush()
+    }
+  }, [flush])
 
   const derived = useMemo(() => (game ? derive(game) : null), [game])
 

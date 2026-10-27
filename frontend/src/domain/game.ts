@@ -1,4 +1,4 @@
-import { findConflicts } from './rules'
+import { findConflicts, peers } from './rules'
 import {
   CELLS,
   DIGITS,
@@ -67,9 +67,36 @@ function win(g: Game, now: number | null): Game {
   return { ...stopClock(g, now), status: 'won' }
 }
 
+const bit = (d: Digit) => 1 << (d - 1)
+
+/** Pone un número, limpia sus notas y quita ese dígito de las notas de sus pares (FR-011). */
 function setDigit(g: Game, cell: CellIndex, digit: Digit): Game {
   if (g.values[cell] === digit) return g
-  return commit(g, { kind: 'set', cell, digit }, [{ cell, value: digit, notes: 0 }], null)
+  const b = bit(digit)
+  const changes = [{ cell, value: digit as CellValue, notes: 0 }]
+  for (const p of peers(cell)) {
+    const n = g.notes[p]!
+    if (n & b) changes.push({ cell: p, value: g.values[p]!, notes: n & ~b })
+  }
+  return commit(g, { kind: 'set', cell, digit }, changes, null)
+}
+
+function toggleNote(g: Game, cell: CellIndex, digit: Digit): Game {
+  if (g.values[cell] !== 0) return g
+  const notes = g.notes[cell]! ^ bit(digit)
+  return commit(g, { kind: 'toggleNote', cell, digit }, [{ cell, value: 0, notes }], null)
+}
+
+function undo(g: Game): Game {
+  const last = g.history.at(-1)
+  if (!last || g.status !== 'playing') return g
+  const values = [...g.values]
+  const notes = [...g.notes]
+  for (const s of last.before) {
+    values[s.cell] = s.value
+    notes[s.cell] = s.notes
+  }
+  return { ...g, values, notes, history: g.history.slice(0, -1) }
 }
 
 function erase(g: Game, cell: CellIndex): Game {
@@ -86,7 +113,7 @@ export function gameReducer(g: Game, action: GameAction): Game {
     case 'input': {
       const i = g.selected
       if (i == null || g.status !== 'playing' || isGiven(g, i)) return g
-      return setDigit(g, i, action.digit)
+      return g.notesMode ? toggleNote(g, i, action.digit) : setDigit(g, i, action.digit)
     }
 
     case 'erase': {
@@ -96,8 +123,10 @@ export function gameReducer(g: Game, action: GameAction): Game {
     }
 
     case 'undo':
+      return undo(g)
+
     case 'toggleNotesMode':
-      return g
+      return { ...g, notesMode: !g.notesMode }
 
     case 'tick':
     case 'pause': {
@@ -128,6 +157,16 @@ export function derive(g: Game): Derived {
     digitCounts,
     isComplete: g.values.every((v) => v !== 0) && conflicts.size === 0,
     hasProgress: g.history.length > 0,
-    highlight: { related: new Set(), sameDigit: new Set() },
+    highlight: highlightOf(g),
   }
+}
+
+function highlightOf(g: Game): Derived['highlight'] {
+  const related = new Set<CellIndex>()
+  const sameDigit = new Set<CellIndex>()
+  if (g.selected == null) return { related, sameDigit }
+  for (const p of peers(g.selected)) related.add(p)
+  const v = g.values[g.selected]
+  if (v) g.values.forEach((x, i) => x === v && sameDigit.add(i))
+  return { related, sameDigit }
 }

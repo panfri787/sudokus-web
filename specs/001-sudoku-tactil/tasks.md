@@ -121,14 +121,14 @@ misma fila (la nota 3 desaparece), deshacer dos veces y comprobar cada estado.
 
 ### Tests for User Story 2 (write first, MUST fail)
 
-- [ ] T038 [P] [US2] Pruebas en `frontend/tests/unit/game-notes-undo.test.ts`: `toggleNotesMode` invierte `notesMode`; `input` en modo notas alterna el bit `d-1` de `notes[i]` solo si `values[i] === 0` y registra `Move { kind: 'toggleNote' }`; poner un número definitivo pone `notes[i] = 0` y quita el bit de ese dígito en los 20 `peers`, guardando en `before` el estado previo de **todas** las celdas modificadas; `erase` vacía valor y notas; `undo` restaura exactamente `before` y quita la última jugada, y con `history` vacío o `status: 'won'` no hace nada; invariante: "`notes` siempre `0` en celdas con pista o con valor"; `derive().highlight.related` contiene fila, columna y caja de `selected` y `highlight.sameDigit` las celdas con el mismo valor
+- [X] T038 [P] [US2] Pruebas en `frontend/tests/unit/game-notes-undo.test.ts`: `toggleNotesMode` invierte `notesMode`; `input` en modo notas alterna el bit `d-1` de `notes[i]` solo si `values[i] === 0` y registra `Move { kind: 'toggleNote' }`; poner un número definitivo pone `notes[i] = 0` y quita el bit de ese dígito en los 20 `peers`, guardando en `before` el estado previo de **todas** las celdas modificadas; `erase` vacía valor y notas; `undo` restaura exactamente `before` y quita la última jugada, y con `history` vacío o `status: 'won'` no hace nada; invariante: "`notes` siempre `0` en celdas con pista o con valor"; `derive().highlight.related` contiene fila, columna y caja de `selected` y `highlight.sameDigit` las celdas con el mismo valor
 - [ ] T039 [P] [US2] Prueba e2e en `frontend/tests/e2e/notes-undo.spec.ts` con `?seed=12345`: activar "Notas" (`aria-pressed="true"`), tocar 1 y 3 en una celda vacía → nombre "notas 1, 3"; poner un 3 definitivo en otra celda de la misma fila → la primera pasa a "notas 1"; "Deshacer" dos veces vuelve al estado previo; "Deshacer" queda `disabled` sin historial
 
 ### Implementation for User Story 2
 
-- [ ] T040 [US2] Ampliar `gameReducer` en `frontend/src/domain/game.ts` con `toggleNotesMode`, `input` en modo notas, eliminación automática de notas en `peers` al poner un número (FR-011), limpieza de notas en `erase` y `undo` según data-model.md; y añadir `highlight` a `derive`. Hasta que pase T038
-- [ ] T041 [US2] Mostrar las notas en `frontend/src/components/Cell.tsx` como cuadrícula 3×3 de dígitos pequeños en posición fija, y aplicar las clases de resaltado `related` (fondo tenue) y `sameDigit` (fondo intermedio) desde `derive().highlight`
-- [ ] T042 [US2] Añadir a `frontend/src/components/Toolbar.tsx` los botones "Notas" (`aria-pressed` según `notesMode`, despacha `toggleNotesMode`) y "Deshacer" (despacha `undo`, `disabled` cuando `history.length === 0` o `status === 'won'`), manteniendo todo sin scroll a 360×640
+- [X] T040 [US2] Ampliar `gameReducer` en `frontend/src/domain/game.ts` con `toggleNotesMode`, `input` en modo notas, eliminación automática de notas en `peers` al poner un número (FR-011), limpieza de notas en `erase` y `undo` según data-model.md; y añadir `highlight` a `derive`. Hasta que pase T038
+- [X] T041 [US2] Mostrar las notas en `frontend/src/components/Cell.tsx` como cuadrícula 3×3 de dígitos pequeños en posición fija, y aplicar las clases de resaltado `related` (fondo tenue) y `sameDigit` (fondo intermedio) desde `derive().highlight`
+- [X] T042 [US2] Añadir a `frontend/src/components/Toolbar.tsx` los botones "Notas" (`aria-pressed` según `notesMode`, despacha `toggleNotesMode`) y "Deshacer" (despacha `undo`, `disabled` cuando `history.length === 0` o `status === 'won'`), manteniendo todo sin scroll a 360×640
 
 **Checkpoint**: US1 + US2 funcionan; T038-T039 en verde.
 
@@ -144,14 +144,14 @@ en su rango y que la cabecera muestra el nivel.
 
 ### Tests for User Story 3 (write first, MUST fail)
 
-- [ ] T043 [P] [US3] Pruebas de preferencias en `frontend/tests/unit/prefs.test.ts`: `loadPrefs()` devuelve `{ lastDifficulty: 'medium' }` si no hay dato, si `schema !== 1` o si `lastDifficulty` no es `'easy' | 'medium' | 'hard'`; `savePrefs` escribe `{ "schema": 1, "lastDifficulty": … }` en `sudokus-web:v1:prefs`
+- [X] T043 [P] [US3] Pruebas de preferencias en `frontend/tests/unit/prefs.test.ts`: `loadPrefs()` devuelve `{ lastDifficulty: 'medium' }` si no hay dato, si `schema !== 1` o si `lastDifficulty` no es `'easy' | 'medium' | 'hard'`; `savePrefs` escribe `{ "schema": 1, "lastDifficulty": … }` en `sudokus-web:v1:prefs`
 - [ ] T044 [P] [US3] Prueba e2e en `frontend/tests/e2e/difficulty.spec.ts`: "Nueva partida" (sin progreso) abre el diálogo con "Fácil", "Medio", "Difícil" y "Cancelar"; para cada nivel, contar las celdas con nombre "pista …" y comprobar el rango (36-45 / 30-35 / 24-29) y que `StatusBar` muestra el nivel; "Cancelar" mantiene la partida; tras elegir "Difícil" y recargar con almacenamiento vacío de partida, la nueva partida es "Difícil"
 
 ### Implementation for User Story 3
 
-- [ ] T045 [P] [US3] Implementar `loadPrefs()` y `savePrefs(prefs)` en `frontend/src/state/prefs.ts` sobre `readJson`/`writeJson` con `PREFS_KEY` y el formato `StoredPrefs` de contracts/storage-schema.md. Hasta que pase T043
-- [ ] T046 [P] [US3] Implementar `NewGameDialog` en `frontend/src/components/dialogs/NewGameDialog.tsx`: `role="dialog"`, `aria-modal="true"`, título "Nueva partida", botones "Fácil", "Medio", "Difícil" (un toque, ≥ `var(--key-min)`) y "Cancelar"
-- [ ] T047 [US3] Integrar el flujo en `frontend/src/components/Toolbar.tsx`, `frontend/src/components/dialogs/WinDialog.tsx` y `frontend/src/state/GameProvider.tsx`: "Nueva partida" → `ConfirmDialog` si `hasProgress` → `NewGameDialog` → `startNewGame(nivel)` + `savePrefs({ lastDifficulty: nivel })`; la primera partida al montar usa `loadPrefs().lastDifficulty` en lugar de `'medium'`; `usePuzzleSource` descarta el pregenerado si el nivel pedido es otro
+- [X] T045 [P] [US3] Implementar `loadPrefs()` y `savePrefs(prefs)` en `frontend/src/state/prefs.ts` sobre `readJson`/`writeJson` con `PREFS_KEY` y el formato `StoredPrefs` de contracts/storage-schema.md. Hasta que pase T043
+- [X] T046 [P] [US3] Implementar `NewGameDialog` en `frontend/src/components/dialogs/NewGameDialog.tsx`: `role="dialog"`, `aria-modal="true"`, título "Nueva partida", botones "Fácil", "Medio", "Difícil" (un toque, ≥ `var(--key-min)`) y "Cancelar"
+- [X] T047 [US3] Integrar el flujo en `frontend/src/components/Toolbar.tsx`, `frontend/src/components/dialogs/WinDialog.tsx` y `frontend/src/state/GameProvider.tsx`: "Nueva partida" → `ConfirmDialog` si `hasProgress` → `NewGameDialog` → `startNewGame(nivel)` + `savePrefs({ lastDifficulty: nivel })`; la primera partida al montar usa `loadPrefs().lastDifficulty` en lugar de `'medium'`; `usePuzzleSource` descarta el pregenerado si el nivel pedido es otro
 
 **Checkpoint**: US1-US3 funcionan; T043-T044 en verde.
 
@@ -165,14 +165,14 @@ en su rango y que la cabecera muestra el nivel.
 
 ### Tests for User Story 4 (write first, MUST fail)
 
-- [ ] T048 [P] [US4] Pruebas en `frontend/tests/unit/serialization.test.ts`: `toStored(game)` produce el formato `StoredGame` de contracts/storage-schema.md (grids como cadenas de 81 caracteres, `schema: 1`, sin `selected` ni `runningSince`, con `runningSince` sumado a `elapsedMs`); `fromStored(toStored(g))` reconstruye la partida; `fromStored` devuelve `null` en **cada** caso de storage-schema › Validación al cargar: JSON no objeto, `schema !== 1`, campo ausente, longitud ≠ 81, carácter o entero fuera de rango, `values` distinto de `givens` en una pista, `solution` inválida o distinta de `givens`, `notes[i] !== 0` en celda con pista o valor
+- [X] T048 [P] [US4] Pruebas en `frontend/tests/unit/serialization.test.ts`: `toStored(game)` produce el formato `StoredGame` de contracts/storage-schema.md (grids como cadenas de 81 caracteres, `schema: 1`, sin `selected` ni `runningSince`, con `runningSince` sumado a `elapsedMs`); `fromStored(toStored(g))` reconstruye la partida; `fromStored` devuelve `null` en **cada** caso de storage-schema › Validación al cargar: JSON no objeto, `schema !== 1`, campo ausente, longitud ≠ 81, carácter o entero fuera de rango, `values` distinto de `givens` en una pista, `solution` inválida o distinta de `givens`, `notes[i] !== 0` en celda con pista o valor
 - [ ] T049 [P] [US4] Prueba e2e en `frontend/tests/e2e/persistence.spec.ts`: hacer jugadas y notas, esperar 500 ms, recargar → mismo tablero, notas, nivel y cronómetro ≥ tiempo anterior; con una partida en `status: 'won'` guardada, al cargar se ofrece "Nueva partida"; con `localStorage['sudokus-web:v1:game'] = '{roto'`, la web arranca con partida nueva sin mostrar error
 
 ### Implementation for User Story 4
 
-- [ ] T050 [US4] Implementar `toStored(game, now)` y `fromStored(data): Game | null` en `frontend/src/domain/serialization.ts` con todas las validaciones de contracts/storage-schema.md; exportar desde `frontend/src/domain/index.ts`. Hasta que pase T048
-- [ ] T051 [US4] Persistir en `frontend/src/state/GameProvider.tsx`: al montar, `fromStored(readJson(GAME_KEY))`; si es válida y `status === 'playing'`, restaurarla (con `selected = null` y `resume` si la página está visible) en lugar de generar; guardar con `writeJson(GAME_KEY, toStored(...))` tras cada acción, agrupado a como mucho una escritura cada 300 ms, y forzar el guardado en `visibilitychange` (hidden) y `pagehide`
-- [ ] T052 [US4] Si la partida restaurada tiene `status === 'won'`, mostrar `WinDialog` con su tiempo y la opción "Nueva partida" en `frontend/src/state/GameProvider.tsx` / `frontend/src/App.tsx` (US4, escenario 2)
+- [X] T050 [US4] Implementar `toStored(game, now)` y `fromStored(data): Game | null` en `frontend/src/domain/serialization.ts` con todas las validaciones de contracts/storage-schema.md; exportar desde `frontend/src/domain/index.ts`. Hasta que pase T048
+- [X] T051 [US4] Persistir en `frontend/src/state/GameProvider.tsx`: al montar, `fromStored(readJson(GAME_KEY))`; si es válida y `status === 'playing'`, restaurarla (con `selected = null` y `resume` si la página está visible) en lugar de generar; guardar con `writeJson(GAME_KEY, toStored(...))` tras cada acción, agrupado a como mucho una escritura cada 300 ms, y forzar el guardado en `visibilitychange` (hidden) y `pagehide`
+- [X] T052 [US4] Si la partida restaurada tiene `status === 'won'`, mostrar `WinDialog` con su tiempo y la opción "Nueva partida" en `frontend/src/state/GameProvider.tsx` / `frontend/src/App.tsx` (US4, escenario 2)
 
 **Checkpoint**: las cuatro historias funcionan de forma independiente; T048-T049 en verde.
 

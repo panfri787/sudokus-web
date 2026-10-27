@@ -43,6 +43,7 @@ test('nueva partida con progreso pide confirmación y carga otro tablero', async
   )
   await page.getByRole('button', { name: 'Nueva partida' }).tap()
   await page.getByRole('button', { name: 'Empezar nueva' }).tap()
+  await page.getByRole('button', { name: 'Medio' }).tap()
   await expect
     .poll(() =>
       board.getByRole('button').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label')).join('|')),
