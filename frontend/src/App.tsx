@@ -1,0 +1,62 @@
+import { useState } from 'react'
+import { Board } from './components/Board'
+import { ConfirmDialog } from './components/dialogs/ConfirmDialog'
+import { WinDialog } from './components/dialogs/WinDialog'
+import { NumberPad } from './components/NumberPad'
+import { StatusBar } from './components/StatusBar'
+import { Toolbar } from './components/Toolbar'
+import { es } from './i18n/es'
+import { GameProvider } from './state/GameProvider'
+import { useGame } from './state/gameContext'
+
+type DialogState = 'none' | 'confirm'
+
+export function GameView() {
+  const { game, derived, generating, startNewGame } = useGame()
+  const [dialog, setDialog] = useState<DialogState>('none')
+
+  const requestNewGame = () => {
+    if (derived?.hasProgress && game?.status === 'playing') setDialog('confirm')
+    else startNewGame('medium')
+  }
+
+  return (
+    <main className="app">
+      <StatusBar />
+      <div className="board-area">
+        <Board />
+        {(!game || generating) && (
+          <div className="loading" role="status">
+            {es.generating}
+          </div>
+        )}
+      </div>
+      <div className="side">
+        <StatusBar />
+        <Toolbar onNewGame={requestNewGame} />
+        <NumberPad />
+      </div>
+
+      {dialog === 'confirm' && (
+        <ConfirmDialog
+          onConfirm={() => {
+            setDialog('none')
+            startNewGame('medium')
+          }}
+          onCancel={() => setDialog('none')}
+        />
+      )}
+      {game?.status === 'won' && !generating && dialog === 'none' && (
+        <WinDialog elapsedMs={game.elapsedMs} onNewGame={() => startNewGame('medium')} />
+      )}
+    </main>
+  )
+}
+
+export default function App() {
+  return (
+    <GameProvider>
+      <GameView />
+    </GameProvider>
+  )
+}

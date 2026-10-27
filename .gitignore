@@ -9,3 +9,8 @@ coverage/
 # Sistema
 .DS_Store
 *.log
+
+# Playwright
+frontend/playwright-report/
+frontend/test-results/
+frontend/blob-report/
