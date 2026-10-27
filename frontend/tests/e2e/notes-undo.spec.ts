@@ -8,7 +8,7 @@ const sameRow = empties.find((i) => i !== a && Math.floor(i / 9) === Math.floor(
 
 test('notas, borrado automático y deshacer', async ({ page }) => {
   const board = await openGame(page)
-  const notes = page.getByRole('button', { name: 'Notas' })
+  const notes = page.getByRole('button', { name: 'Notas', exact: true })
   const undo = page.getByRole('button', { name: 'Deshacer' })
   await expect(undo).toBeDisabled()
 

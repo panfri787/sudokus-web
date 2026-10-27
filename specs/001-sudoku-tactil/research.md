@@ -134,8 +134,10 @@ impacto en la constitución.
 
 ## R10. Calidad de código
 
-- **Decision**: ESLint (configuración plana con `typescript-eslint` y reglas de hooks de React)
-  y Prettier. `tsc --noEmit` en la verificación.
+- **Decision**: oxlint (con las reglas de hooks de React) y Prettier. `tsc -b --noEmit` en la
+  verificación. *Cambio en la implementación*: la plantilla actual de Vite trae oxlint y
+  TypeScript 7 en lugar de ESLint; se mantiene oxlint porque `typescript-eslint` puede no
+  soportar TypeScript 7.
 - **Rationale**: estándar del ecosistema; bajo coste.
 
 ## R11. Ubicación del código y backend futuro

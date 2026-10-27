@@ -25,10 +25,11 @@ npm run dev -- --host  # igual, accesible desde el móvil en la red local
 | Comando | Qué valida | Resultado esperado |
 |---------|------------|--------------------|
 | `npm run typecheck` | Tipos estrictos | Sin errores |
-| `npm run lint` | ESLint | Sin errores |
+| `npm run lint` | oxlint | Sin errores |
 | `npm test` | Dominio y componentes (Vitest) | Todo en verde |
 | `npm run test:sample` | 1.000 puzles por nivel con semillas fijas: solución única y pistas en rango; tiempo medio y p95 por nivel | 100 % únicos (SC-002) y 100 % dentro del rango de pistas; p95 < 1 s con CPU ×4 más lenta (SC-003) |
 | `npm run test:e2e` | Playwright en Pixel 7, iPhone 13 y 360×640 con emulación táctil (desarrollo) y sobre el build de producción (layout y privacidad); contraste con axe; respuesta al toque < 100 ms | Todo en verde |
+| `npm run test:perf` | Respuesta al toque sobre el build con CPU ×4 y un solo worker | < 100 ms (SC-004) |
 | `npm run build && npm run preview` | Sitio estático en `frontend/dist/` | Se sirve sin backend |
 
 ## Escenarios manuales

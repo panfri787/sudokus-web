@@ -26,6 +26,7 @@ npm run dev -- --host  # accesible desde un móvil en la misma red
 | `npm test` | Pruebas del dominio y de componentes (Vitest) |
 | `npm run test:sample` | 1.000 sudokus por nivel: unicidad, rango de pistas y tiempos |
 | `npm run test:e2e` | Playwright con emulación táctil (Pixel 7, iPhone 13, 360×640 y build) |
+| `npm run test:perf` | Respuesta al toque < 100 ms sobre el build, CPU ×4, un solo worker |
 | `npm run size` | Build y comprobación del tamaño del bundle (< 150 KB gzip) |
 | `npm run build` | Sitio estático en `frontend/dist/` |
 
@@ -34,6 +35,9 @@ Antes de la primera ejecución de `test:e2e`:
 ```bash
 npx playwright install --with-deps chromium webkit
 ```
+
+Con Node instalado mediante nvm, `sudo` no ve `npx`; usa
+`sudo env "PATH=$PATH" npx playwright install-deps chromium webkit`.
 
 ## Integración continua
 

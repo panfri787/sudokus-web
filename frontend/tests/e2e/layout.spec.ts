@@ -68,7 +68,9 @@ test('escritorio 1280×800: tablero de 560 px como máximo', async ({ page }) =>
   expect(box.height).toBeLessThanOrEqual(560)
 })
 
-test('respuesta al toque < 100 ms con CPU ×4 (SC-004)', async ({ page, browserName }) => {
+// @perf: se ejecuta aparte, sobre el build de producción y con un solo worker
+// (`npm run test:perf`), para medir lo que nota el jugador sin contención de CPU.
+test('respuesta al toque < 100 ms con CPU ×4 (SC-004) @perf', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'La limitación de CPU solo existe en Chromium')
   await page.setViewportSize({ width: 360, height: 640 })
   const board = await openGame(page)
@@ -96,7 +98,7 @@ test('respuesta al toque < 100 ms con CPU ×4 (SC-004)', async ({ page, browserN
       [selector, done] as const,
     )
 
-  const cellSel = `.board .board-cell:nth-child(${(target % 9) + 1})`
+  const cellSel = `.board-cell:nth-child(${(target % 9) + 1})`
   const rowSel = `.board .board-row:nth-child(${Math.floor(target / 9) + 1}) `
   const selectLatency = measure(
     rowSel + cellSel + ' .cell',

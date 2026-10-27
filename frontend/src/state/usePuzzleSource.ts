@@ -21,6 +21,7 @@ export function createPuzzleSource(): PuzzleSource {
   let nextId = 1
   const pending = new Map<number, (r: GenerateResponse | null) => void>()
   let prefetched: { difficulty: Difficulty; promise: Promise<Sudoku> } | null = null
+  let inflight: { difficulty: Difficulty; promise: Promise<Sudoku> } | null = null
   let testSeed = takeTestSeed()
 
   const failAll = () => {
@@ -81,22 +82,29 @@ export function createPuzzleSource(): PuzzleSource {
   }
 
   return {
-    async request(difficulty) {
-      let promise: Promise<Sudoku>
+    request(difficulty) {
+      // Peticiones repetidas del mismo nivel (p. ej. efectos de StrictMode) comparten resultado.
+      if (inflight?.difficulty === difficulty) return inflight.promise
+      let source: Promise<Sudoku>
       if (testSeed != null) {
-        promise = generate(difficulty, testSeed)
+        source = generate(difficulty, testSeed)
         testSeed = null
       } else if (prefetched?.difficulty === difficulty) {
-        promise = prefetched.promise
+        source = prefetched.promise
       } else {
-        promise = generate(difficulty, randomSeed())
+        source = generate(difficulty, randomSeed())
       }
       prefetched = null
-      const sudoku = await promise
-      prefetch(difficulty)
-      return sudoku
+      const promise = source.then((sudoku) => {
+        if (inflight?.promise === promise) inflight = null
+        prefetch(difficulty)
+        return sudoku
+      })
+      inflight = { difficulty, promise }
+      return promise
     },
     dispose() {
+      // `inflight` se conserva: tras un desmontaje simulado (StrictMode) se reutiliza.
       failAll()
       prefetched = null
     },

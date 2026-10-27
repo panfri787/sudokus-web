@@ -13,7 +13,7 @@ const labels = (page: import('@playwright/test').Page) =>
 test('recargar conserva tablero, notas, nivel y tiempo', async ({ page }) => {
   const board = await openGame(page)
   await play(page, board, empties[0]!, sudoku.solution[empties[0]!]!)
-  await page.getByRole('button', { name: 'Notas' }).tap()
+  await page.getByRole('button', { name: 'Notas', exact: true }).tap()
   await cell(board, empties[1]!).tap()
   await key(page, 2).tap()
   await page.waitForTimeout(1500)

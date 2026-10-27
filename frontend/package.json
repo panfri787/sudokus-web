@@ -13,7 +13,8 @@
     "test": "vitest run tests/unit tests/component",
     "test:sample": "vitest run tests/sample",
     "test:e2e": "playwright test",
-    "size": "vite build && node scripts/check-size.mjs"
+    "size": "vite build && node scripts/check-size.mjs",
+    "test:perf": "PERF=1 playwright test --workers=1 --project=build-360"
   },
   "dependencies": {
     "react": "^19.3.1",
