@@ -6,8 +6,11 @@
 
 La interfaz se diseña primero para pantallas táctiles y después se adapta a ratón y teclado.
 
-- Todo elemento interactivo (celdas, teclado numérico, botones) MUST tener un área táctil
-  mínima de 44×44 px CSS.
+- Las teclas del teclado numérico y los botones MUST tener un área táctil mínima de
+  44×44 px CSS.
+- Las celdas del tablero MUST tener un área táctil mínima de 36×36 px CSS (9 celdas de 44 px
+  no caben en la pantalla mínima de 360 px), y la celda seleccionada MUST resaltarse de forma
+  inequívoca para que un toque errado se detecte al momento.
 - Introducir un número MUST requerir como máximo dos toques: seleccionar celda y elegir número.
 - La interacción MUST NOT depender de hover, doble clic, clic derecho ni del teclado del
   sistema; el teclado nativo del móvil MUST NOT abrirse al jugar.
@@ -105,4 +108,4 @@ legible para todos los jugadores.
 - Toda especificación, plan y revisión MUST verificar el cumplimiento de los principios; la
   complejidad añadida MUST justificarse por escrito.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-27 | **Last Amended**: 2026-10-27
+**Version**: 1.0.1 | **Ratified**: 2026-10-27 | **Last Amended**: 2026-10-27

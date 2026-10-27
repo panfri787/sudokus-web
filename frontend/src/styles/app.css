@@ -1,0 +1,378 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+/* ---------- Layout ---------- */
+
+.app {
+  /* Alto ocupado por todo lo que no es el tablero en vertical. */
+  --chrome-v: 230px;
+  --side-w: 200px;
+  --board: min(100dvw - 16px, 100dvh - var(--chrome-v), 560px);
+
+  height: 100dvh;
+  padding: var(--gap);
+  padding-top: max(var(--gap), env(safe-area-inset-top));
+  padding-bottom: max(var(--gap), env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: var(--board);
+  grid-template-areas: 'status' 'board' 'side';
+  grid-template-rows: auto var(--board) auto;
+  gap: var(--gap);
+  justify-content: center;
+  align-content: center;
+}
+
+.side {
+  grid-area: side;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.status {
+  grid-area: status;
+}
+
+.board-area {
+  grid-area: board;
+  position: relative;
+}
+
+@media (orientation: landscape) {
+  .app {
+    --board: min(100dvh - 16px, 100dvw - var(--side-w) - 24px, 560px);
+    grid-template-columns: var(--board) var(--side-w);
+    grid-template-rows: var(--board);
+    grid-template-areas: 'board side';
+    align-items: stretch;
+  }
+
+  .side {
+    justify-content: center;
+  }
+
+  .app > .status {
+    display: none;
+  }
+}
+
+@media not (orientation: landscape) {
+  .side > .status {
+    display: none;
+  }
+}
+
+/* ---------- Barra de estado ---------- */
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+  font-size: 1rem;
+}
+
+.status-level {
+  font-weight: 600;
+}
+
+.status-timer {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+/* ---------- Tablero ---------- */
+
+.board {
+  width: var(--board);
+  height: var(--board);
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  border: 2px solid var(--line-strong);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--surface);
+  touch-action: manipulation;
+}
+
+.board-row {
+  display: contents;
+}
+
+.board-cell {
+  display: contents;
+}
+
+.cell {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  font-size: calc(var(--board) / 9 * 0.56);
+  line-height: 1;
+  position: relative;
+}
+
+.cell.box-right {
+  border-right: 2px solid var(--line-strong);
+}
+
+.cell.box-bottom {
+  border-bottom: 2px solid var(--line-strong);
+}
+
+.cell.last-col {
+  border-right: 0;
+}
+
+.cell.last-row {
+  border-bottom: 0;
+}
+
+.cell.related {
+  background: var(--related);
+}
+
+.cell.same {
+  background: var(--same);
+}
+
+.cell.selected {
+  background: var(--selected);
+  box-shadow: inset 0 0 0 3px var(--selected-ring);
+}
+
+.cell.given {
+  color: var(--given);
+  font-weight: 700;
+}
+
+.cell.player {
+  color: var(--player);
+  font-weight: 400;
+}
+
+.cell.conflict {
+  color: var(--conflict);
+  background: var(--conflict-bg);
+}
+
+.cell.conflict .cell-value {
+  text-decoration: underline wavy var(--conflict);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.cell.selected.conflict {
+  box-shadow: inset 0 0 0 3px var(--conflict);
+}
+
+.cell:focus-visible {
+  outline: 3px solid var(--selected-ring);
+  outline-offset: -3px;
+}
+
+.notes {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  font-size: calc(var(--board) / 9 * 0.27);
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.notes span {
+  display: grid;
+  place-items: center;
+}
+
+/* ---------- Botones ---------- */
+
+.toolbar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+@media (orientation: landscape) {
+  .toolbar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.btn,
+.key {
+  min-width: var(--key-min);
+  min-height: var(--key-min);
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--key-bg);
+  color: var(--text);
+  transition: background-color 80ms;
+}
+
+.btn {
+  padding: 0 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn:active,
+.key:active {
+  background: var(--key-active);
+}
+
+.btn[aria-pressed='true'] {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.btn.primary {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+@media (orientation: landscape) {
+  .numpad {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.key {
+  min-height: 48px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  position: relative;
+}
+
+.key[aria-disabled='true'] {
+  opacity: 0.4;
+}
+
+.key-done {
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  font-size: 0.75rem;
+}
+
+.key:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid var(--selected-ring);
+  outline-offset: 2px;
+}
+
+/* ---------- Diálogos y carga ---------- */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--backdrop);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 10;
+}
+
+.dialog {
+  width: min(340px, 100%);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 30%);
+}
+
+.dialog h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.dialog p {
+  margin: 0;
+}
+
+.dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dialog-actions .btn {
+  min-height: 48px;
+  font-size: 1rem;
+}
+
+.loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
