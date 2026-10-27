@@ -278,3 +278,11 @@ Task: "Implementar ConfirmDialog y WinDialog en frontend/src/components/dialogs/
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+
+---
+
+## Phase 8: Convergence
+
+- [ ] T063 Ejecutar `frontend/tests/e2e/layout.spec.ts` también en los proyectos `iPhone 13` (WebKit) y `Pixel 7` quitando `layout` de su `testIgnore` en `frontend/playwright.config.ts` (mantener `privacy` excluido), y corregir en `frontend/src/styles/app.css` cualquier fallo de sin scroll, celdas ≥ 36 px, teclas ≥ 44 px o disposición horizontal en WebKit; la prueba `@perf` sigue solo en `build-360` per plan: T006 / T055, Constitución › Restricciones técnicas (partial)
+- [ ] T064 Hacer inerte la tecla de un dígito colocado 9 veces: en `frontend/src/components/NumberPad.tsx` no despachar `input` si `digitCounts[d] >= 9` (mantener `aria-disabled="true"` y la marca ✓), y en `frontend/src/state/useKeyboard.ts` ignorar igualmente ese dígito; añadir el caso a `frontend/tests/component/board.test.tsx` (tocar la tecla completa no cambia la celda seleccionada) per FR-016 (partial)
+- [ ] T065 En `frontend/src/state/GameProvider.tsx`, capturar el rechazo de `source.request(pending)` y reintentar con `generateSudoku(pending, randomSeed())` hasta 3 veces sin mostrar error técnico, de modo que "Generando…" nunca quede bloqueado; cubrirlo con una prueba en `frontend/tests/component/` que simule una fuente que rechaza la primera petición per research R4 / contracts/domain-api › Protocolo (partial)
