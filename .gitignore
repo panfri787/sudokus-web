@@ -1,0 +1,11 @@
+# Dependencias y builds
+node_modules/
+dist/
+coverage/
+
+# Configuración local de Claude Code
+.claude/settings.local.json
+
+# Sistema
+.DS_Store
+*.log
