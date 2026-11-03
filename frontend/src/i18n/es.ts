@@ -19,6 +19,10 @@ export const es = {
   confirmDiscard: '¿Empezar una partida nueva? Se perderá la actual.',
   won: '¡Resuelto!',
   wonTime: (time: string) => `Tiempo: ${time}`,
+  mistakes: (n: number, max: number) => `Fallos: ${n}/${max}`,
+  lost: 'Sin intentos',
+  lostText: 'Has cometido 3 fallos.',
+  retry: 'Reintentar',
   generating: 'Generando…',
   chooseLevel: 'Elige el nivel',
   digitDone: (d: Digit) => `${d}, completo`,
@@ -29,7 +33,7 @@ export const es = {
     else if (state.value) what = `valor ${state.value}`
     else if (state.notes.length) what = `notas ${state.notes.join(', ')}`
     else what = 'vacía'
-    return `${base}, ${what}${state.conflict ? ', en conflicto' : ''}`
+    return `${base}, ${what}${state.conflict ? ', en conflicto' : ''}${state.wrong ? ', incorrecto' : ''}`
   },
 }
 
@@ -38,6 +42,7 @@ export interface CellLabelState {
   value: number
   notes: readonly number[]
   conflict: boolean
+  wrong?: boolean
 }
 
 /** `mm:ss` (o `h:mm:ss` a partir de una hora). */

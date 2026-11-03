@@ -2,6 +2,7 @@ import { findConflicts, peers } from './rules'
 import {
   CELLS,
   DIGITS,
+  MAX_MISTAKES,
   type CellIndex,
   type CellSnapshot,
   type CellValue,
@@ -21,6 +22,7 @@ export function newGame(puzzle: Sudoku, now: number): Game {
     notesMode: false,
     history: [],
     status: 'playing',
+    mistakes: 0,
     elapsedMs: 0,
     runningSince: now,
     startedAt: now,
@@ -35,12 +37,16 @@ const snapshot = (g: Game, cell: CellIndex): CellSnapshot => ({
   notes: g.notes[cell]!,
 })
 
-/** Aplica cambios de celdas, registra la jugada y comprueba la victoria. */
+/**
+ * Aplica cambios de celdas, registra la jugada y comprueba la victoria.
+ * `mistakes` es el contador tras la jugada (por defecto, el actual).
+ */
 function commit(
   g: Game,
   move: Omit<Move, 'before'>,
   changes: readonly { cell: CellIndex; value: CellValue; notes: number }[],
   now: number | null,
+  mistakes = g.mistakes,
 ): Game {
   const values = [...g.values]
   const notes = [...g.notes]
@@ -49,7 +55,15 @@ function commit(
     values[c.cell] = c.value
     notes[c.cell] = c.notes
   }
-  const next: Game = { ...g, values, notes, history: [...g.history, { ...move, before }] }
+  const next: Game = {
+    ...g,
+    values,
+    notes,
+    mistakes,
+    history: [...g.history, { ...move, before }],
+  }
+  // La derrota se comprueba antes que la victoria (caso límite "Último número incorrecto").
+  if (mistakes >= MAX_MISTAKES) return { ...stopClock(next, now), status: 'lost' }
   return isSolved(values) ? win(next, now) : next
 }
 
@@ -69,16 +83,24 @@ function win(g: Game, now: number | null): Game {
 
 const bit = (d: Digit) => 1 << (d - 1)
 
-/** Pone un número, limpia sus notas y quita ese dígito de las notas de sus pares (FR-011). */
+/**
+ * Pone un número y limpia las notas de su celda. Si es correcto, quita ese dígito de las
+ * notas de sus pares (FR-011); si no coincide con la solución, cuenta un fallo y no toca
+ * las notas de los pares (002 research R3).
+ */
 function setDigit(g: Game, cell: CellIndex, digit: Digit): Game {
   if (g.values[cell] === digit) return g
-  const b = bit(digit)
+  const wrong = digit !== g.puzzle.solution[cell]
   const changes = [{ cell, value: digit as CellValue, notes: 0 }]
-  for (const p of peers(cell)) {
-    const n = g.notes[p]!
-    if (n & b) changes.push({ cell: p, value: g.values[p]!, notes: n & ~b })
+  if (!wrong) {
+    const b = bit(digit)
+    for (const p of peers(cell)) {
+      const n = g.notes[p]!
+      if (n & b) changes.push({ cell: p, value: g.values[p]!, notes: n & ~b })
+    }
   }
-  return commit(g, { kind: 'set', cell, digit }, changes, null)
+  const mistakes = wrong ? g.mistakes + 1 : g.mistakes
+  return commit(g, { kind: 'set', cell, digit }, changes, null, mistakes)
 }
 
 function toggleNote(g: Game, cell: CellIndex, digit: Digit): Game {
@@ -139,6 +161,9 @@ export function gameReducer(g: Game, action: GameAction): Game {
       return g.status === 'playing' && g.runningSince == null
         ? { ...g, runningSince: action.now }
         : g
+
+    case 'retry':
+      return g.status === 'lost' ? newGame(g.puzzle, action.now) : g
   }
 }
 
@@ -148,6 +173,8 @@ export interface Derived {
   isComplete: boolean
   hasProgress: boolean
   highlight: { related: Set<CellIndex>; sameDigit: Set<CellIndex> }
+  /** Celdas del jugador cuyo número no coincide con la solución. */
+  wrong: Set<CellIndex>
 }
 
 export function derive(g: Game): Derived {
@@ -160,7 +187,17 @@ export function derive(g: Game): Derived {
     isComplete: g.values.every((v) => v !== 0) && conflicts.size === 0,
     hasProgress: g.history.length > 0,
     highlight: highlightOf(g),
+    wrong: wrongOf(g),
   }
+}
+
+function wrongOf(g: Game): Set<CellIndex> {
+  const { givens, solution } = g.puzzle
+  const wrong = new Set<CellIndex>()
+  g.values.forEach((v, i) => {
+    if (givens[i] === 0 && v !== 0 && v !== solution[i]) wrong.add(i)
+  })
+  return wrong
 }
 
 function highlightOf(g: Game): Derived['highlight'] {

@@ -2,7 +2,8 @@
 
 Web para jugar sudokus 9×9 generados al azar, con solución única, pensada para pantallas
 táctiles: dos toques por número, notas, deshacer, tres niveles de dificultad y partida guardada
-en el dispositivo. Funciona entera en el navegador, sin backend, sin cookies y sin analítica.
+en el dispositivo. Cada partida admite 3 fallos (números que no coinciden con la solución); al
+tercero se pierde y se puede reintentar el mismo sudoku o empezar una partida nueva. Funciona entera en el navegador, sin backend, sin cookies y sin analítica.
 
 ## Requisitos
 
@@ -54,5 +55,6 @@ en GitHub (*Settings → Branches → Branch protection rules*) exigiendo el che
 
 ## Documentación
 
-Especificación, plan y tareas en [`specs/001-sudoku-tactil/`](specs/001-sudoku-tactil/); principios
+Especificación, plan y tareas en [`specs/001-sudoku-tactil/`](specs/001-sudoku-tactil/) y
+[`specs/002-limite-fallos/`](specs/002-limite-fallos/) (límite de fallos); principios
 del proyecto en [`.specify/memory/constitution.md`](.specify/memory/constitution.md).

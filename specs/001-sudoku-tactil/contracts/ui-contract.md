@@ -2,6 +2,9 @@
 
 **Feature**: `001-sudoku-tactil` | Requisitos en [spec.md](../spec.md)
 
+> **Ampliado por `002-limite-fallos`**: contador "Fallos: N/3", celda incorrecta y diálogo
+> de derrota. Ver [002 ui-contract](../../002-limite-fallos/contracts/ui-contract.md).
+
 Contrato de lo que la interfaz expone al jugador y a las pruebas de extremo a extremo. Los
 nombres accesibles se usan como selectores en Playwright (`getByRole`), así que cambiarlos
 rompe el contrato.

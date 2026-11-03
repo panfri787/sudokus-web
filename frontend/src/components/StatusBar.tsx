@@ -1,3 +1,4 @@
+import { MAX_MISTAKES } from '../domain'
 import { es, formatTime } from '../i18n/es'
 import { useGame } from '../state/gameContext'
 
@@ -6,6 +7,9 @@ export function StatusBar({ className = '' }: { className?: string }) {
   return (
     <div className={`status ${className}`}>
       <span className="status-level">{game ? es.difficulty[game.puzzle.difficulty] : ''}</span>
+      <span className="status-mistakes" aria-live="polite">
+        {es.mistakes(game?.mistakes ?? 0, MAX_MISTAKES)}
+      </span>
       <span className="status-timer" role="timer" aria-label={es.timer}>
         {formatTime(game?.elapsedMs ?? 0)}
       </span>

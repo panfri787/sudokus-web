@@ -9,6 +9,7 @@ interface Props {
   notes: NoteMask
   selected: boolean
   conflict: boolean
+  wrong: boolean
   related: boolean
   same: boolean
   onSelect: (index: CellIndex) => void
@@ -25,6 +26,7 @@ export const Cell = memo(function Cell(p: Props) {
     !p.selected && p.same && 'same',
     !p.selected && !p.same && p.related && 'related',
     p.conflict && 'conflict',
+    p.wrong && 'wrong',
     col % 3 === 2 && col < 8 && 'box-right',
     row % 3 === 2 && row < 8 && 'box-bottom',
     col === 8 && 'last-col',
@@ -42,6 +44,7 @@ export const Cell = memo(function Cell(p: Props) {
         value: p.value,
         notes: noteDigits,
         conflict: p.conflict,
+        wrong: p.wrong,
       })}
       aria-current={p.selected || undefined}
       tabIndex={p.selected ? 0 : -1}

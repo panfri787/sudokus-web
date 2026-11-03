@@ -25,6 +25,7 @@ export function Board() {
                 notes={game.notes[i]!}
                 selected={game.selected === i}
                 conflict={derived.conflicts.has(i)}
+                wrong={derived.wrong.has(i)}
                 related={highlight.related.has(i)}
                 same={highlight.sameDigit.has(i)}
                 onSelect={onSelect}

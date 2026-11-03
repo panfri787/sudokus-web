@@ -2,6 +2,10 @@
 
 **Feature**: `001-sudoku-tactil` | Decisión en [research.md › R7](../research.md#r7-persistencia-local)
 
+> **Ampliado por `002-limite-fallos`**: `StoredGame` añade `mistakes` (0..3, opcional al
+> leer) y `status` admite `'lost'`. Ver
+> [002 storage-schema](../../002-limite-fallos/contracts/storage-schema.md).
+
 Solo `localStorage`. Sin cookies y sin transmitir nada fuera del dispositivo (FR-019).
 
 ## Claves

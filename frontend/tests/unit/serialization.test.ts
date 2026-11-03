@@ -95,3 +95,41 @@ describe('fromStored', () => {
     expect(fromStored(data)).toBeNull()
   })
 })
+
+describe('fallos y derrota (002)', () => {
+  const empties = SUDOKU.givens.flatMap((v, i) => (v === 0 ? [i] : []))
+  const wrongAt = (i: number) => (SUDOKU.solution[i] === 1 ? 2 : 1) as 1 | 2
+  const withMistakes = (n: number) =>
+    empties
+      .slice(0, n)
+      .reduce<Game>(
+        (g, i) => run(g, { type: 'select', cell: i }, { type: 'input', digit: wrongAt(i) }),
+        newGame(SUDOKU, T0),
+      )
+
+  it('toStored incluye mistakes', () => {
+    expect(toStored(withMistakes(2), T0).mistakes).toBe(2)
+  })
+
+  it('ida y vuelta conserva los fallos y la derrota', () => {
+    const one = fromStored(toStored(withMistakes(1), T0))!
+    expect(one).toMatchObject({ mistakes: 1, status: 'playing' })
+    const lost = fromStored(toStored(withMistakes(3), T0))!
+    expect(lost).toMatchObject({ mistakes: 3, status: 'lost', runningSince: null })
+  })
+
+  it('una partida guardada sin mistakes se restaura con 0 (FR-008)', () => {
+    const s = mutate((x) => delete x.mistakes)
+    expect(fromStored(s)?.mistakes).toBe(0)
+  })
+
+  it.each([-1, 4, 1.5, '2', null])('rechaza mistakes = %j', (m) => {
+    expect(fromStored(mutate((x) => (x.mistakes = m)))).toBeNull()
+  })
+
+  it('rechaza estados incoherentes con el contador', () => {
+    expect(fromStored(mutate((x) => ((x.status = 'lost'), (x.mistakes = 2))))).toBeNull()
+    expect(fromStored(mutate((x) => ((x.status = 'playing'), (x.mistakes = 3))))).toBeNull()
+    expect(fromStored(mutate((x) => (x.status = 'paused')))).toBeNull()
+  })
+})
