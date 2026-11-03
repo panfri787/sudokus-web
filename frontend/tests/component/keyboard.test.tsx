@@ -57,6 +57,18 @@ describe('teclado físico', () => {
     expect(cells()[FIRST_EMPTY]).toHaveAccessibleName(/vacía$/)
   })
 
+  it('un número incorrecto con el teclado cuenta como fallo', async () => {
+    const { user, cells } = setup()
+    const right = SUDOKU.solution[FIRST_EMPTY]!
+    await user.click(cells()[FIRST_EMPTY]!)
+    await user.keyboard(String(right === 1 ? 2 : 1))
+    expect(screen.getAllByText('Fallos: 1/3').length).toBeGreaterThan(0)
+    expect(cells()[FIRST_EMPTY]).toHaveAccessibleName(/, incorrecto$/)
+    await user.keyboard(String(right))
+    expect(screen.getAllByText('Fallos: 1/3').length).toBeGreaterThan(0)
+    expect(cells()[FIRST_EMPTY]).not.toHaveAccessibleName(/incorrecto/)
+  })
+
   it('se ignora con un diálogo abierto', async () => {
     const { user, cells } = setup()
     await user.click(cells()[FIRST_EMPTY]!)

@@ -45,26 +45,28 @@ describe('modo notas', () => {
     expect(run(g, { type: 'input', digit: 2 })).toBe(g)
   })
 
-  it('poner un número limpia sus notas y quita ese dígito de los pares', () => {
+  it('poner un número correcto limpia sus notas y quita ese dígito de los pares', () => {
+    // Desde 002, solo un número correcto limpia las notas de los pares (research R3).
+    const d = SUDOKU.solution[SAME_ROW] as Digit
     let g = run(start(), { type: 'toggleNotesMode' })
     for (const i of [FIRST_EMPTY, SAME_ROW])
       g = run(
         g,
         { type: 'select', cell: i },
         { type: 'input', digit: 1 },
-        { type: 'input', digit: 3 },
+        { type: 'input', digit: d },
       )
     g = run(
       g,
       { type: 'toggleNotesMode' },
       { type: 'select', cell: SAME_ROW },
-      { type: 'input', digit: 3 },
+      { type: 'input', digit: d },
     )
     expect(g.notes[SAME_ROW]).toBe(0)
     expect(g.notes[FIRST_EMPTY]).toBe(bit(1))
     const move = g.history.at(-1)!
-    expect(move.before).toContainEqual({ cell: SAME_ROW, value: 0, notes: bit(1) | bit(3) })
-    expect(move.before).toContainEqual({ cell: FIRST_EMPTY, value: 0, notes: bit(1) | bit(3) })
+    expect(move.before).toContainEqual({ cell: SAME_ROW, value: 0, notes: bit(1) | bit(d) })
+    expect(move.before).toContainEqual({ cell: FIRST_EMPTY, value: 0, notes: bit(1) | bit(d) })
     expect(move.before.every((s) => s.cell === SAME_ROW || peers(SAME_ROW).includes(s.cell))).toBe(
       true,
     )

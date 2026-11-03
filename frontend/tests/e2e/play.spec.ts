@@ -23,7 +23,8 @@ test('un número repetido marca conflicto', async ({ page }) => {
   const row = Math.floor(i / 9)
   const givenInRow = sudoku.givens.find((v, j) => v !== 0 && Math.floor(j / 9) === row)!
   await play(page, board, i, givenInRow)
-  await expect(cell(board, i)).toHaveAccessibleName(/en conflicto$/)
+  // Un número repetido nunca es la solución: también es incorrecto (002).
+  await expect(cell(board, i)).toHaveAccessibleName(/en conflicto, incorrecto$/)
 })
 
 test('completar el sudoku muestra la victoria', async ({ page }) => {

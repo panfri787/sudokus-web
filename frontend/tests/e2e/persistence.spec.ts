@@ -50,3 +50,42 @@ test('datos guardados ilegibles: partida nueva sin error', async ({ page }) => {
   ).toHaveCount(81)
   expect(errors).toEqual([])
 })
+
+const wrongDigit = (i: number) => (sudoku.solution[i] === 1 ? 2 : 1)
+const counter = (page: import('@playwright/test').Page, n: number) =>
+  page.locator('.status:visible .status-mistakes').filter({ hasText: `Fallos: ${n}/3` })
+
+test('recargar conserva los fallos', async ({ page }) => {
+  const board = await openGame(page)
+  await play(page, board, empties[0]!, wrongDigit(empties[0]!))
+  await expect(counter(page, 1)).toBeVisible()
+  await page.waitForTimeout(500)
+  await page.reload()
+  await expect(counter(page, 1)).toBeVisible()
+})
+
+test('recargar una partida perdida mantiene la derrota con el tiempo parado', async ({ page }) => {
+  const board = await openGame(page)
+  for (const i of empties.slice(0, 3)) await play(page, board, i, wrongDigit(i))
+  await expect(page.getByRole('heading', { name: 'Sin intentos' })).toBeVisible()
+  await page.waitForTimeout(500)
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Sin intentos' })).toBeVisible()
+  const timer = page.locator('.status:visible [role=timer]')
+  const t1 = await timer.textContent()
+  await page.waitForTimeout(2000)
+  expect(await timer.textContent()).toBe(t1)
+})
+
+test('recargar tras reintentar restaura la partida reintentada', async ({ page }) => {
+  const board = await openGame(page)
+  for (const i of empties.slice(0, 3)) await play(page, board, i, wrongDigit(i))
+  await page.getByRole('button', { name: 'Reintentar' }).tap()
+  const i = empties[0]!
+  await play(page, board, i, sudoku.solution[i]!)
+  await page.waitForTimeout(500)
+  await page.reload()
+  await expect(cell(board, i)).toHaveAccessibleName(new RegExp(`valor ${sudoku.solution[i]}$`))
+  await expect(counter(page, 0)).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Sin intentos' })).toHaveCount(0)
+})

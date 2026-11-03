@@ -31,7 +31,10 @@ export interface Move {
   readonly before: readonly CellSnapshot[]
 }
 
-export type GameStatus = 'playing' | 'won'
+/** Fallos que terminan la partida (igual en todos los niveles). */
+export const MAX_MISTAKES = 3
+
+export type GameStatus = 'playing' | 'won' | 'lost'
 
 export interface Game {
   readonly puzzle: Sudoku
@@ -41,6 +44,8 @@ export interface Game {
   readonly notesMode: boolean
   readonly history: readonly Move[]
   readonly status: GameStatus
+  /** 0..MAX_MISTAKES; solo sube dentro de una partida. */
+  readonly mistakes: number
   readonly elapsedMs: number
   readonly runningSince: number | null
   readonly startedAt: number
@@ -55,6 +60,7 @@ export type GameAction =
   | { type: 'tick'; now: number }
   | { type: 'pause'; now: number }
   | { type: 'resume'; now: number }
+  | { type: 'retry'; now: number }
 
 export const CELLS = 81
 export const DIGITS: readonly Digit[] = [1, 2, 3, 4, 5, 6, 7, 8, 9]

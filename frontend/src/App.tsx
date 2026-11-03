@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Board } from './components/Board'
 import { ConfirmDialog } from './components/dialogs/ConfirmDialog'
 import { NewGameDialog } from './components/dialogs/NewGameDialog'
+import { LostDialog } from './components/dialogs/LostDialog'
 import { WinDialog } from './components/dialogs/WinDialog'
 import { NumberPad } from './components/NumberPad'
 import { StatusBar } from './components/StatusBar'
@@ -52,7 +53,17 @@ export function GameView() {
         />
       )}
       {game?.status === 'won' && !generating && dialog === 'none' && (
-        <WinDialog elapsedMs={game.elapsedMs} onNewGame={() => setDialog('level')} />
+        <WinDialog
+          elapsedMs={game.elapsedMs}
+          mistakes={game.mistakes}
+          onNewGame={() => setDialog('level')}
+        />
+      )}
+      {game?.status === 'lost' && !generating && dialog === 'none' && (
+        <LostDialog
+          onRetry={() => dispatch({ type: 'retry', now: Date.now() })}
+          onNewGame={() => setDialog('level')}
+        />
       )}
     </main>
   )

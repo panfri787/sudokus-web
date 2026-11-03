@@ -171,7 +171,9 @@ las notas, el nivel y el tiempo se conservan.
 - **FR-010**: Las personas MUST poder activar y desactivar un modo notas para añadir o quitar
   candidatos en una celda.
 - **FR-011**: El sistema MUST eliminar automáticamente las notas que coinciden con un número
-  definitivo recién colocado en su misma fila, columna o caja.
+  definitivo recién colocado en su misma fila, columna o caja. *(Acotado por
+  `002-limite-fallos`: solo se aplica a números correctos; un número incorrecto no quita
+  notas.)*
 - **FR-012**: Las personas MUST poder deshacer jugadas una a una (números, borrados y notas)
   hasta el inicio de la partida.
 - **FR-013**: El sistema MUST resaltar la fila, la columna y la caja de la celda seleccionada,
@@ -229,7 +231,9 @@ las notas, el nivel y el tiempo se conservan.
   Medio 30-35 y Difícil 24-29. La primera partida usa el nivel Medio, o el último nivel
   elegido si ya se jugó antes.
 - **Errores**: se señalan solo los conflictos con las reglas (repeticiones), no los números
-  que no coinciden con la solución, para no revelar la respuesta.
+  que no coinciden con la solución, para no revelar la respuesta. *(Sustituida por
+  `002-limite-fallos`: los números que no coinciden con la solución cuentan como fallo y se
+  marcan.)*
 - **Fuera de alcance en esta versión**: cuentas de usuario, rankings, compartir partidas,
   pistas automáticas o "resolver por mí", variantes distintas del 9×9 clásico,
   historial y estadísticas de partidas, e instalación como aplicación o apertura sin conexión.

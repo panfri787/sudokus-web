@@ -115,6 +115,11 @@ button {
   color: var(--muted);
 }
 
+.status-mistakes {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 /* ---------- Tablero ---------- */
 
 .board {
@@ -204,6 +209,22 @@ button {
 }
 
 .cell.selected.conflict {
+  box-shadow: inset 0 0 0 3px var(--conflict);
+}
+
+/* Número que no coincide con la solución (002): tachado además del color; el fondo de
+   conflicto prevalece sobre selección y resaltado para mantener contraste AA. */
+.cell.wrong {
+  color: var(--conflict);
+  background: var(--conflict-bg);
+}
+
+.cell.wrong .cell-value,
+.cell.conflict.wrong .cell-value {
+  text-decoration: line-through 2px var(--conflict);
+}
+
+.cell.selected.wrong {
   box-shadow: inset 0 0 0 3px var(--conflict);
 }
 

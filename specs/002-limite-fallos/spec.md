@@ -62,8 +62,8 @@ tablero ya no admite jugadas.
 sentido al contador.
 
 **Independent Test**: cometer tres fallos en una partida y comprobar que aparece el mensaje de
-partida perdida, que el tablero queda bloqueado, que "Nueva partida" empieza un sudoku nuevo
-con el contador a 0/3 y que "Reintentar" vuelve a mostrar el mismo sudoku con solo sus pistas.
+partida perdida, que el tablero queda bloqueado, que "Nueva partida" lleva a elegir el nivel
+de un sudoku nuevo, que empieza con el contador a 0/3, y que "Reintentar" vuelve a mostrar el mismo sudoku con solo sus pistas.
 
 **Acceptance Scenarios**:
 
@@ -71,9 +71,11 @@ con el contador a 0/3 y que "Reintentar" vuelve a mostrar el mismo sudoku con so
    contador muestra 3/3, el cronómetro se detiene y aparece un mensaje de partida perdida con
    los botones "Nueva partida" y "Reintentar".
 2. **Given** la partida está perdida, **When** la persona toca el tablero, el teclado
-   numérico, "Borrar", "Deshacer" o el modo notas, **Then** el tablero no cambia.
+   numérico, "Borrar", "Deshacer" o el modo notas, **Then** no cambia ningún número ni nota
+   del tablero ni el contador de fallos.
 3. **Given** la partida está perdida, **When** la persona toca "Nueva partida", **Then**
-   aparece un sudoku distinto con el contador a 0/3, sin pedir confirmación.
+   se abre directamente la elección de nivel, sin pedir confirmación de descarte, y al elegir
+   un nivel aparece un sudoku distinto con el contador a 0/3.
 4. **Given** la partida está perdida, **When** la persona recarga la página, **Then** sigue
    viendo la partida perdida y el mensaje, no una partida jugable.
 5. **Given** la partida está perdida, **When** la persona toca "Reintentar", **Then** aparece
@@ -143,7 +145,8 @@ en 1/3.
   quitar todos los números y notas de la persona y poner a 0 los fallos, el cronómetro y el
   historial de jugadas. No pide confirmación y se puede usar las veces que se quiera.
 - **FR-006**: Empezar una partida nueva o reintentar MUST poner el contador a 0. Si la
-  partida actual ya está perdida, ninguna de las dos opciones pide confirmación.
+  partida actual ya está perdida, ninguna de las dos opciones pide confirmación de descarte.
+  "Nueva partida" lleva a la elección de nivel, igual que desde el mensaje de victoria.
 - **FR-007**: El sistema MUST guardar en el dispositivo el número de fallos y el estado de
   partida perdida junto con la partida en curso, y restaurarlos al volver.
 - **FR-008**: Las partidas guardadas antes de esta funcionalidad MUST restaurarse con 0
@@ -171,8 +174,9 @@ en 1/3.
   partida perdida y no se puede hacer ninguna jugada más.
 - **SC-004**: Tras una recarga, el 100 % de las partidas restauradas conservan su número de
   fallos y su estado (en curso, ganada o perdida).
-- **SC-005**: Desde el mensaje de partida perdida, la persona empieza una partida nueva o
-  reintenta el mismo sudoku con un solo toque.
+- **SC-005**: Desde el mensaje de partida perdida, la persona reintenta el mismo sudoku con un
+  solo toque, o empieza una partida nueva con dos toques ("Nueva partida" y el nivel), sin
+  ninguna confirmación intermedia.
 
 ## Assumptions
 
@@ -184,6 +188,10 @@ en 1/3.
   solo puede empezar una partida nueva o reintentar el mismo sudoku desde cero.
 - La partida perdida no se guarda en ningún historial ni estadística; siguen fuera de alcance
   como en la funcionalidad 001.
+- Un número incorrecto **no** quita ese número de las notas de su fila, columna y caja; solo
+  un número correcto lo hace. Así, un error que ya cuesta un fallo no borra además candidatos
+  válidos. Esto acota la regla FR-011 de la funcionalidad 001, que pasa a aplicarse solo a los
+  números correctos.
 - Se mantiene el marcado de conflictos (repeticiones) de la funcionalidad 001. Un número que
   se repite nunca coincide con la solución, así que siempre cuenta además como fallo.
 - Esta funcionalidad sustituye la suposición "Errores" de la funcionalidad 001: marcar un

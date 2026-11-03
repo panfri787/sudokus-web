@@ -2,6 +2,7 @@ import { countSolutions } from './solver'
 import { findConflicts } from './rules'
 import {
   CELLS,
+  MAX_MISTAKES,
   isDigit,
   type CellSnapshot,
   type CellValue,
@@ -19,12 +20,14 @@ export interface StoredGame {
   notes: number[]
   notesMode: boolean
   history: Move[]
-  status: 'playing' | 'won'
+  status: 'playing' | 'won' | 'lost'
+  mistakes: number
   elapsedMs: number
   startedAt: number
 }
 
 const LEVELS: readonly unknown[] = ['easy', 'medium', 'hard']
+const STATUSES: readonly unknown[] = ['playing', 'won', 'lost']
 const KINDS: readonly unknown[] = ['set', 'erase', 'toggleNote']
 
 const gridToString = (g: Grid) => g.join('')
@@ -78,6 +81,7 @@ export function toStored(game: Game, now: number): StoredGame {
     notesMode: game.notesMode,
     history: game.history.map((m) => ({ ...m, before: m.before.map((s) => ({ ...s })) })),
     status: game.status,
+    mistakes: game.mistakes,
     elapsedMs: game.elapsedMs + running,
     startedAt: game.startedAt,
   }
@@ -92,7 +96,16 @@ export function fromStored(data: unknown): Game | null {
   const values = parseGrid(data.values, true)
   if (!givens || !solution || !values) return null
   if (!LEVELS.includes(p.difficulty) || !Number.isInteger(p.seed)) return null
-  if (data.status !== 'playing' && data.status !== 'won') return null
+  if (!STATUSES.includes(data.status)) return null
+  // `mistakes` falta en partidas guardadas antes de 002: cuentan como 0 (FR-008).
+  const mistakes = data.mistakes === undefined ? 0 : data.mistakes
+  if (
+    !Number.isInteger(mistakes) ||
+    (mistakes as number) < 0 ||
+    (mistakes as number) > MAX_MISTAKES
+  )
+    return null
+  if ((data.status === 'lost') !== (mistakes === MAX_MISTAKES)) return null
   if (typeof data.notesMode !== 'boolean' || !isTime(data.elapsedMs) || !isTime(data.startedAt))
     return null
 
@@ -122,7 +135,8 @@ export function fromStored(data: unknown): Game | null {
     selected: null,
     notesMode: data.notesMode,
     history: history as Move[],
-    status: data.status,
+    status: data.status as Game['status'],
+    mistakes: mistakes as number,
     elapsedMs: data.elapsedMs,
     runningSince: null,
     startedAt: data.startedAt,
